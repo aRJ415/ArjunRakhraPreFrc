@@ -1,12 +1,13 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.PersistMode;
-import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
-import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.config.SparkFlexConfig;
+import com.revrobotics.spark.config.SparkMaxConfig;
+
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -18,14 +19,14 @@ import frc.robot.Constants.DriveConstants;
  */
 public class Drive extends SubsystemBase {
   // ---- Motors ----
-  private final SparkFlex leftLeader =
-      new SparkFlex(DriveConstants.kLeftLeaderID, MotorType.kBrushless);
-  private final SparkFlex leftFollower =
-      new SparkFlex(DriveConstants.kLeftFollowerID, MotorType.kBrushless);
-  private final SparkFlex rightLeader =
-      new SparkFlex(DriveConstants.kRightLeaderID, MotorType.kBrushless);
-  private final SparkFlex rightFollower =
-      new SparkFlex(DriveConstants.kRightFollowerID, MotorType.kBrushless);
+  private final SparkMax leftLeader =
+      new SparkMax(DriveConstants.kLeftLeaderID, MotorType.kBrushless);
+  private final SparkMax leftFollower =
+      new SparkMax(DriveConstants.kLeftFollowerID, MotorType.kBrushless);
+  private final SparkMax rightLeader =
+      new SparkMax(DriveConstants.kRightLeaderID, MotorType.kBrushless);
+  private final SparkMax rightFollower =
+      new SparkMax(DriveConstants.kRightFollowerID, MotorType.kBrushless);
 
   // ---- Encoders (built into the Vortex, read from the leaders) ----
   private final RelativeEncoder leftEncoder;
@@ -46,29 +47,29 @@ public class Drive extends SubsystemBase {
 
   private void configureMotors() {
     // Settings shared by all 4 motors.
-    SparkFlexConfig baseConfig = new SparkFlexConfig();
+    SparkMaxConfig baseConfig = new SparkMaxConfig();
     baseConfig
         .idleMode(IdleMode.kBrake) // brake when you let go of the controls
         .smartCurrentLimit(DriveConstants.kCurrentLimit)
         .voltageCompensation(12.0); // drive the same on a full or tired battery
 
     // Leaders: shared settings + which direction is "forward" for that side.
-    SparkFlexConfig leftLeaderConfig = new SparkFlexConfig();
+    SparkMaxConfig leftLeaderConfig = new SparkMaxConfig();
     leftLeaderConfig.apply(baseConfig);
     leftLeaderConfig.inverted(DriveConstants.kLeftInverted);
 
-    SparkFlexConfig rightLeaderConfig = new SparkFlexConfig();
+    SparkMaxConfig rightLeaderConfig = new SparkMaxConfig();
     rightLeaderConfig.apply(baseConfig);
     rightLeaderConfig.inverted(DriveConstants.kRightInverted);
 
     // Followers: shared settings + "copy this leader".
     // Both motors in a gearbox face the same way, so the follower is NOT inverted relative to
     // its leader. (If your gearbox has them facing opposite ways, use follow(leader, true).)
-    SparkFlexConfig leftFollowerConfig = new SparkFlexConfig();
+    SparkMaxConfig leftFollowerConfig = new SparkMaxConfig();
     leftFollowerConfig.apply(baseConfig);
     leftFollowerConfig.follow(leftLeader);
 
-    SparkFlexConfig rightFollowerConfig = new SparkFlexConfig();
+    SparkMaxConfig rightFollowerConfig = new SparkMaxConfig();
     rightFollowerConfig.apply(baseConfig);
     rightFollowerConfig.follow(rightLeader);
 
